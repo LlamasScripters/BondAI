@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Link from "next/link"
 
 interface Service {
   id: string
@@ -258,9 +259,11 @@ export default function ServiceMarketplace() {
                             </>
                           )}
                         </Button>
-                        <Button variant="ghost" size="sm">
-                          Voir profil
-                        </Button>
+                        <Link href={`/profil/${service.id}`}>
+                          <Button variant="ghost" size="sm">
+                            Voir profil
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </CardContent>
@@ -289,9 +292,16 @@ export default function ServiceMarketplace() {
                     </div>
                     <p className="text-xs text-gray-600 mb-2">{team.description}</p>
                     <div className="text-xs text-gray-500">{team.projects} projets ensemble</div>
-                    <Button size="sm" variant="outline" className="w-full mt-2 text-xs">
-                      Embaucher l'équipe
-                    </Button>
+                    <div className="flex gap-1 mt-2">
+                      <Link href={`/equipe/${team.id}`}>
+                        <Button size="sm" variant="outline" className="text-xs flex-1">
+                          Voir détails
+                        </Button>
+                      </Link>
+                      <Button size="sm" variant="default" className="text-xs flex-1">
+                        Embaucher
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </CardContent>
