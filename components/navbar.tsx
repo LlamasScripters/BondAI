@@ -1,5 +1,5 @@
 "use client"
-import { Moon, Sun, Bot, Plus, Monitor, ChevronDown, LayoutDashboard } from "lucide-react"
+import { Moon, Sun, Bot, Plus, Monitor, ChevronDown, LayoutDashboard, ShoppingCart, Store, HelpCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
@@ -17,21 +17,24 @@ export function Navbar() {
             <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
               <Bot className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">ServiceIA</span>
-          </Link>
-
-          {/* Navigation centrale */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-foreground hover:text-primary transition-colors font-medium">
-              Marketplace
+            <span className="text-xl font-bold text-foreground">BondIa</span>
+          </Link>          {/* Navigation centrale */}
+          <div className="hidden md:flex items-center gap-2">
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                <Store className="h-4 w-4 mr-2" />
+                Marketplace
+              </Button>
             </Link>
-            <Link href="/comment-ca-marche" className="text-muted-foreground hover:text-foreground transition-colors">
-              Comment ça marche
+            <Link href="/comment-ca-marche">
+              <Button variant="ghost" size="sm">
+                <HelpCircle className="h-4 w-4 mr-2" />
+                Comment ça marche
+              </Button>
             </Link>
-          </div>
-
-          {/* Actions à droite */}
-          <div className="flex items-center gap-4">
+          </div>{/* Actions à droite */}
+          <div className="flex items-center gap-2">
+            
             {/* Dashboard link */}
             <Link href="/dashboard">
               <Button variant="ghost" size="sm">
@@ -40,10 +43,18 @@ export function Navbar() {
               </Button>
             </Link>
 
+            {/* Panier link */}
+            <Link href="/panier">
+              <Button variant="ghost" size="sm">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Panier
+              </Button>
+            </Link>
+
             {/* Theme dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-9 px-2">
+                <Button variant="ghost" size="sm">
                   <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                   <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                   <ChevronDown className="h-3 w-3 ml-1" />
@@ -68,9 +79,9 @@ export function Navbar() {
 
             {/* CTA Proposer une prestation */}
             <Link href="/proposer">
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium">
+              <Button variant="ghost" size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Proposer une prestation
+                Proposer
               </Button>
             </Link>
 
