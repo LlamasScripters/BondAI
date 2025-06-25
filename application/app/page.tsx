@@ -129,25 +129,69 @@ export default function ServiceMarketplace() {
           <p className="text-lg text-muted-foreground">
             Trouvez le prestataire parfait grâce à la recherche en langage naturel
           </p>
-        </div>
-
-        {/* Search Bar */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        </div>        {/* Search Bar */}
+        <Card className="mb-8 border-2 border-dashed border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardContent className="p-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                Décrivez votre projet en quelques mots
+              </h2>
+              <p className="text-gray-600">
+                Notre IA comprend votre langage naturel et trouve les meilleurs prestataires pour vous
+              </p>
+            </div>
+            
+            <div className="relative mb-6">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <Input
-                placeholder="Décrivez votre besoin en langage naturel... Ex: 'Je cherche un développeur React pour créer une app e-commerce moderne'"
+                placeholder="Ex: Je veux créer une boutique en ligne moderne avec paiement sécurisé..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-3 text-lg"
+                className="pl-12 pr-32 py-4 text-lg border-2 border-gray-200 focus:border-blue-400 rounded-xl"
               />
-              <Button className="absolute right-2 top-1/2 transform -translate-y-1/2">
+              <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-6 rounded-lg">
                 <Zap className="h-4 w-4 mr-2" />
                 Rechercher
               </Button>
             </div>
-            <div className="flex items-center gap-2 mt-4 text-sm text-gray-600">
+
+            {/* Exemples de prompts */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+              <Button 
+                variant="outline" 
+                className="text-left justify-start h-auto p-3 bg-white hover:bg-blue-50 border-gray-200"
+                onClick={() => setSearchQuery("Je veux créer une application mobile de livraison")}
+              >
+                <div className="text-sm">
+                  <div className="font-medium text-blue-700">💱 App mobile</div>
+                  <div className="text-gray-600">Application de livraison</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="text-left justify-start h-auto p-3 bg-white hover:bg-blue-50 border-gray-200"
+                onClick={() => setSearchQuery("Refonte complète de mon site web vitrine")}
+              >
+                <div className="text-sm">
+                  <div className="font-medium text-green-700">🎨 Refonte web</div>
+                  <div className="text-gray-600">Site vitrine moderne</div>
+                </div>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="text-left justify-start h-auto p-3 bg-white hover:bg-blue-50 border-gray-200"
+                onClick={() => setSearchQuery("Analyse de données et création de dashboards")}
+              >
+                <div className="text-sm">
+                  <div className="font-medium text-purple-700">📊 Data Science</div>
+                  <div className="text-gray-600">Analyse et visualisation</div>
+                </div>
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
               <Filter className="h-4 w-4" />
               <span>Filtres intelligents activés • Recherche sémantique • Recommandations IA</span>
             </div>
