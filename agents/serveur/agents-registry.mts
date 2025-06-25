@@ -2,6 +2,7 @@ import type { CompiledStateGraph } from '@langchain/langgraph';
 import 'dotenv/config';
 
 import { mygesAgent } from '../Agents/myges/myges.mts';
+import { portfolioCreatorAgent } from '../Agents/portfolio-creator/portfolio-creator.mts';
 
 export interface AgentInfo {
   id: string;
@@ -17,6 +18,12 @@ export const AGENTS_REGISTRY: Record<string, AgentInfo> = {
     name: 'MyGES Agent',
     description: 'Agent spécialisé pour MyGES et les informations météo',
     agent: mygesAgent
+  },
+  'portfolio-creator': {
+    id: 'portfolio-creator',
+    name: 'Portfolio Creator',
+    description: 'Agent IA spécialisé dans la création de portfolios professionnels percutants avec génération HTML/CSS',
+    agent: portfolioCreatorAgent
   }
 };
 

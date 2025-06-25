@@ -1,12 +1,22 @@
 "use client"
-import { Moon, Sun, Bot, Plus, Monitor, ChevronDown, LayoutDashboard, ShoppingCart, Store, HelpCircle } from "lucide-react"
+import { Moon, Sun, Bot, Plus, Monitor, ChevronDown, LayoutDashboard, ShoppingCart, Store, HelpCircle, Palette } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { useTheme } from "next-themes"
+import { usePathname } from "next/navigation"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { User } from "lucide-react"
 
 export function Navbar() {
   const { theme, setTheme } = useTheme()
+  const pathname = usePathname()
+
+  const navItems = [
+    { href: "/", label: "Accueil" },
+    { href: "/comment-ca-marche", label: "Comment ça marche" },
+    { href: "/ai-portfolio", label: "Portfolio AI", icon: Palette },
+  ]
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,21 +27,25 @@ export function Navbar() {
             <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
               <Bot className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">BondIa</span>
+            <span className="text-xl font-bold text-foreground">BondIA</span>
           </Link>          {/* Navigation centrale */}
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                <Store className="h-4 w-4 mr-2" />
-                Marketplace
-              </Button>
-            </Link>
-            <Link href="/comment-ca-marche">
-              <Button variant="ghost" size="sm">
-                <HelpCircle className="h-4 w-4 mr-2" />
-                Comment ça marche
-              </Button>
-            </Link>
+            {navItems.map((item) => {
+              const Icon = item.icon
+              return (
+                <Button
+                  key={item.href}
+                  variant={pathname === item.href ? "default" : "ghost"}
+                  asChild
+                  className="flex items-center gap-2"
+                >
+                  <Link href={item.href}>
+                    {Icon && <Icon className="h-4 w-4" />}
+                    {item.label}
+                  </Link>
+                </Button>
+              )
+            })}
           </div>{/* Actions à droite */}
           <div className="flex items-center gap-2">
             
@@ -93,6 +107,11 @@ export function Navbar() {
                 </svg>
               </Button>
             </div>
+
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Avatar" />
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
           </div>
         </div>
       </div>
