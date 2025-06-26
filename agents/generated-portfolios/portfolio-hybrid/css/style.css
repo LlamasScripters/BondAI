@@ -1,0 +1,192 @@
+/* Variables CSS */
+:root {
+  --primary-color: #ff6b6b;
+  --secondary-color: #4ecdc4;
+  --text-color: #333;
+  --bg-color: #f8f9fa;
+  --white: #ffffff;
+  --shadow: 0 4px 20px rgba(0,0,0,0.1);
+  --radius: 12px;
+}
+
+/* Reset et base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* Container principal */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+}
+
+.header p {
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 2px solid rgba(255,255,255,0.3);
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  background: rgba(255,255,255,0.9);
+  color: var(--text-color);
+  transform: translateY(-2px);
+}
+
+/* Sections */
+main {
+  padding: 3rem 2rem;
+}
+
+.section {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.section.active {
+  display: block;
+}
+
+.section h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--primary-color);
+  font-size: 1.8rem;
+}
+
+/* Données utilisateur */
+.user-data {
+  background: var(--bg-color);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid #e9ecef;
+  margin: 1.5rem 0;
+}
+
+.user-data pre {
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+/* Démo JavaScript */
+.demo-container {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin: 2rem 0;
+}
+
+#counterBtn {
+  background: linear-gradient(45deg, var(--primary-color), #ff8a80);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+#counterBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255,107,107,0.4);
+}
+
+.color-changer {
+  text-align: center;
+}
+
+#colorBtn {
+  background: linear-gradient(45deg, var(--secondary-color), #26a69a);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+#colorBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(78,205,196,0.4);
+}
+
+#colorBox {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  margin: 0 auto;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+  box-shadow: var(--shadow);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body { padding: 1rem; }
+  .header { padding: 2rem 1rem; }
+  .header h1 { font-size: 2rem; }
+  main { padding: 2rem 1rem; }
+  nav { gap: 0.5rem; }
+  .nav-btn { padding: 0.6rem 1rem; font-size: 0.9rem; }
+}

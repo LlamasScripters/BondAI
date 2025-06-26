@@ -45,6 +45,10 @@ export function loadAndProcessPrompt(promptPath: string): string {
 
 // Fonction pour charger un prompt depuis un agent spécifique
 export function loadAgentPrompt(agentName: string): string {
+  if (agentName === 'portfolio-creator') {
+    const promptPath = path.join(process.cwd(), 'Agents', agentName, 'prompt-ultra-simple.md');
+    return loadAndProcessPrompt(promptPath);
+  }
   const promptPath = path.join(process.cwd(), 'Agents', agentName, 'prompt.md');
   return loadAndProcessPrompt(promptPath);
 } 

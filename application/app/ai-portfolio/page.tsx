@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +14,7 @@ interface Message {
   timestamp: Date
   htmlContent?: string
   portfolioData?: any
+  projectData?: any
 }
 
 export default function AIPortfolioPage() {
@@ -23,6 +23,8 @@ export default function AIPortfolioPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [threadId, setThreadId] = useState<string>()
   const [generatedPortfolios, setGeneratedPortfolios] = useState<any[]>([])
+  const [isGeneratingProject, setIsGeneratingProject] = useState(false)
+  const [lastProjectData, setLastProjectData] = useState<any>(null)
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
@@ -43,9 +45,10 @@ export default function AIPortfolioPage() {
         thread_id: threadId
       })
 
-      // Vérifier si la réponse contient du HTML
+      // Vérifier si la réponse contient du HTML ou un projet complet
       let htmlContent = undefined
       let portfolioData = undefined
+      let projectData = undefined
       
       // Extraire le HTML si présent dans la réponse
       const htmlMatch = response.content.match(/```html\n([\s\S]*?)\n```/)
@@ -58,15 +61,35 @@ export default function AIPortfolioPage() {
         htmlContent = response.content
       }
       
-      // Ou si la réponse est un objet avec du HTML (tool response)
+      // Détecter les réponses JSON (projectFileGenerator ou autres tools)
       try {
         const parsed = JSON.parse(response.content)
-        if (parsed.html) {
+        
+        // Réponse du projectFileGenerator
+        if (parsed.success && parsed.zipPath && parsed.downloadUrl) {
+          projectData = parsed
+          console.log('✅ Projet généré:', projectData)
+        }
+        // Anciens tools avec HTML
+        else if (parsed.html) {
           htmlContent = parsed.html
           portfolioData = parsed
         }
       } catch {
-        // Pas du JSON, c'est normal
+        // Pas du JSON, vérifier s'il y a un JSON caché dans un commentaire HTML
+        const hiddenJsonMatch = response.content.match(/<!-- PROJECT_DATA: ([\s\S]*?) -->/);
+        if (hiddenJsonMatch) {
+          try {
+            const jsonString = hiddenJsonMatch[1].trim();
+            const parsed = JSON.parse(jsonString);
+            if (parsed.success && parsed.downloadUrl) {
+              projectData = parsed;
+              console.log('✅ Projet détecté via commentaire caché:', projectData);
+            }
+          } catch (e) {
+            console.log('❌ Erreur parsing JSON caché:', e);
+          }
+        }
       }
 
       const assistantMessage: Message = {
@@ -74,7 +97,8 @@ export default function AIPortfolioPage() {
         content: response.content,
         timestamp: new Date(),
         htmlContent,
-        portfolioData
+        portfolioData,
+        projectData
       }
 
       setMessages(prev => [...prev, assistantMessage])
@@ -130,22 +154,120 @@ export default function AIPortfolioPage() {
     }
   }
 
+  const downloadProjectZip = async (downloadUrl: string, filename: string) => {
+    try {
+      // Construire l'URL complète du serveur d'agents
+      const serverUrl = process.env.NEXT_PUBLIC_AGENTS_SERVER_URL || 'http://localhost:8000'
+      const fullUrl = `${serverUrl}${downloadUrl}`
+      
+      // Ouvrir le lien de téléchargement dans un nouvel onglet
+      const link = document.createElement('a')
+      link.href = fullUrl
+      link.download = filename
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error)
+      alert('Erreur lors du téléchargement. Vérifiez que le serveur est démarré.')
+    }
+  }
+
   const generateCompletePortfolio = () => {
-    const promptHTML = `Génère un portfolio HTML complet et responsive en utilisant ton outil createPortfolioHTML avec ces données :
+    const promptProject = `Je souhaite créer un portfolio complet. Voici mes informations :
 
-- Nom: "Alexandre Martin"  
-- Titre: "Développeur Full-Stack"
-- Bio: "Passionné par le développement web moderne, je crée des applications performantes et intuitives"
-- Compétences: ["React", "Node.js", "TypeScript", "MongoDB", "Docker"]
-- Projets: [
-  {name: "E-commerce Platform", description: "Plateforme complète avec paiement Stripe", tech: ["React", "Node.js", "MongoDB"]},
-  {name: "Dashboard Analytics", description: "Interface de visualisation de données en temps réel", tech: ["React", "D3.js", "Socket.io"]}
-]
-- Contact: {email: "alexandre@exemple.com", linkedin: "linkedin.com/in/alexandre", github: "github.com/alexandre"}
+- Nom: Alexandre Martin
+- Titre: Développeur Full-Stack
+- Email: alexandre@exemple.com  
+- Compétences: React, Node.js, TypeScript, MongoDB, Docker
+- Expérience: 3 ans, niveau intermédiaire
+- Projets: E-commerce Platform (React/Node.js), Dashboard Analytics (React/D3.js)
+- Objectif: Trouver un nouveau poste
 
-Utilise le thème 'modern' avec animations activées. Assure-toi de retourner directement le code HTML complet.`
+Utilise projectFileGenerator pour créer un projet React complet avec tous les fichiers et un ZIP téléchargeable. Je veux un style moderne avec formulaire de contact.`
 
-    setInput(promptHTML)
+    setInput(promptProject)
+  }
+
+  // Fonction pour détecter si le bouton de génération doit apparaître
+  const shouldShowGenerationButton = () => {
+    // Vérifier si l'agent a proposé les options de stack (nouvelles phrases)
+    const hasStackOptions = messages.some(message => 
+      message.role === 'assistant' && (
+        message.content.includes('Option 1 : React') ||
+        message.content.includes('Option 2 : Vue.js') ||
+        message.content.includes('Option 3 : Je ne sais pas') ||
+        message.content.includes('choisissez votre stack') ||
+        message.content.includes('Quelle option préférez-vous') ||
+        message.content.includes('stack technologique')
+      )
+    );
+    
+    // Ou si l'utilisateur a répondu avec Option 1/2/3
+    const userChoseStack = messages.some(message =>
+      message.role === 'user' && (
+        message.content.toLowerCase().includes('option 1') ||
+        message.content.toLowerCase().includes('option 2') ||
+        message.content.toLowerCase().includes('option 3')
+      )
+    );
+
+    // Ou si l'agent a dit que le projet est généré
+    const projectGenerated = messages.some(message =>
+      message.role === 'assistant' && (
+        message.content.includes('généré avec succès') ||
+        message.content.includes('portfolio-final.zip') ||
+        message.content.includes('Utilisez le bouton de téléchargement')
+      )
+    );
+    
+    return hasStackOptions || userChoseStack || projectGenerated;
+  };
+
+  // Fonction pour forcer la génération de projet en contournant le chat
+  const forceGenerateProject = async () => {
+    if (isGeneratingProject) return;
+    
+    setIsGeneratingProject(true);
+    try {
+      console.log('🚀 Forçage de génération de projet...');
+      
+      // Étape 1: Structurer les données du chat
+      const conversationData = messages.map(m => `${m.role}: ${m.content}`).join('\n');
+      
+      const structureResponse = await agentsAPI.invokeAgent('portfolio-creator', {
+        message: `MODE DIRECT: Utilise structureUserData avec cette conversation: ${conversationData}`,
+        thread_id: threadId
+      });
+      
+      console.log('📊 Structure response:', structureResponse.content);
+      
+      // Étape 2: Générer le projet avec projectFileGenerator
+      const generateResponse = await agentsAPI.invokeAgent('portfolio-creator', {
+        message: `MODE DIRECT: Utilise projectFileGenerator avec selectedStack: "react", userStructuredData: "${structureResponse.content}", projectName: "sami-portfolio-force"`,
+        thread_id: threadId
+      });
+      
+      console.log('🎯 Generate response:', generateResponse.content);
+      
+      // Vérifier si on a une réponse JSON
+      try {
+        const projectData = JSON.parse(generateResponse.content);
+        if (projectData.success && projectData.downloadUrl) {
+          setLastProjectData(projectData);
+          console.log('✅ Projet généré avec succès!', projectData);
+        }
+      } catch {
+        console.log('📝 Réponse non-JSON:', generateResponse.content);
+      }
+      
+    } catch (error) {
+      console.error('❌ Erreur génération forcée:', error);
+      alert('Erreur lors de la génération. Vérifiez que le serveur est démarré.');
+    } finally {
+      setIsGeneratingProject(false);
+    }
   }
 
   const quickPrompts = [
@@ -176,6 +298,7 @@ Utilise le thème 'modern' avec animations activées. Assure-toi de retourner di
             <Badge variant="secondary">📱 Responsive</Badge>
           </div>
         </div>
+
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Prompts rapides */}
@@ -271,6 +394,36 @@ Utilise le thème 'modern' avec animations activées. Assure-toi de retourner di
                               <Download className="h-3 w-3" />
                               Télécharger
                             </Button>
+                          </div>
+                        )}
+
+                        {/* Boutons d'action si projet complet généré */}
+                        {message.projectData?.success && message.projectData?.downloadUrl && (
+                          <div className="mt-3 space-y-2">
+                            <div className="text-sm font-medium text-green-600">
+                              ✅ Projet complet généré avec succès !
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => downloadProjectZip(
+                                  message.projectData.downloadUrl, 
+                                  `${message.projectData.projectName || 'portfolio'}.zip`
+                                )}
+                                className="flex items-center gap-1 bg-green-600 hover:bg-green-700"
+                              >
+                                <Download className="h-3 w-3" />
+                                Télécharger Projet ZIP
+                              </Button>
+                              <div className="text-xs text-gray-500 self-center">
+                                {message.projectData.files?.length || 0} fichiers
+                              </div>
+                            </div>
+                            {message.projectData.stackInfo && (
+                              <div className="text-xs text-gray-600 mt-1">
+                                Stack: {message.projectData.stackInfo.split('\n')[0].replace('**Stack:** ', '')}
+                              </div>
+                            )}
                           </div>
                         )}
                         

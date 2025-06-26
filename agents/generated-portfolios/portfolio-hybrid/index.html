@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Vanilla - portfolio-hybrid</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚀 Mon Portfolio Vanilla JS</h1>
+            <p>Créé avec HTML5 + CSS3 + JavaScript ES6+</p>
+            <nav>
+                <button class="nav-btn active" data-section="about">À propos</button>
+                <button class="nav-btn" data-section="demo">Démo JS</button>
+                <button class="nav-btn" data-section="contact">Contact</button>
+            </nav>
+        </header>
+        
+        <main>
+            <section id="about" class="section active">
+                <h2>👤 À propos</h2>
+                <div class="user-data">
+                    <pre id="userData">{
+  "personalInfo": {
+    "name": "Un S",
+    "title": "Super ! Créer un portfolio moderne est une excellente idée pour mettre en valeur tes 3 ans d'expérience.",
+    "location": "France",
+    "email": "contact@portfolio.dev",
+    "phone": ""
+  },
+  "experience": {
+    "level": "mid",
+    "yearsOfExperience": 3,
+    "currentRole": "Développeur",
+    "previousRoles": [
+      "Freelance",
+      "Développeur"
+    ],
+    "industries": [
+      "TECH",
+      "SAAS",
+      "E-COMMERCE"
+    ]
+  },
+  "skills": {
+    "technical": [
+      "TypeScript",
+      "JavaScript",
+      "React",
+      "Vue.js",
+      "Express",
+      "CSS",
+      "HTML"
+    ],
+    "soft": [
+      "Communication",
+      "Autonomie",
+      "Travail en équipe"
+    ],
+    "languages": [
+      "Français"
+    ],
+    "certifications": []
+  },
+  "projects": [
+    {
+      "name": "Site E-commerce",
+      "description": "Site e-commerce avec amélioration SEO et conversion",
+      "technologies": [
+        "Shopify",
+        "JavaScript",
+        "JSON-LD"
+      ],
+      "url": "",
+      "github": "",
+      "impact": "Projet open source"
+    },
+    {
+      "name": "Portfolio Personnel",
+      "description": "Portfolio personnel avec blog technique intégré",
+      "technologies": [
+        "Next.js",
+        "MDX",
+        "Tailwind"
+      ],
+      "url": "",
+      "github": "",
+      "impact": "Projet open source"
+    }
+  ],
+  "goals": {
+    "careerGoals": "Développer activité freelance",
+    "targetCompanies": [
+      "Entreprises tech"
+    ],
+    "targetRoles": [
+      "Développeur Full-stack"
+    ],
+    "timeline": "12 mois"
+  },
+  "preferences": {
+    "designStyle": "minimal",
+    "colorScheme": "auto",
+    "showcaseProjects": true,
+    "includeBlog": false,
+    "multiLanguage": false
+  }
+}</pre>
+                </div>
+            </section>
+            
+            <section id="demo" class="section">
+                <h2>⚡ Démo JavaScript</h2>
+                <div class="demo-container">
+                    <button id="counterBtn">Clics: <span id="counter">0</span></button>
+                    <div class="color-changer">
+                        <button id="colorBtn">Changer la couleur</button>
+                        <div id="colorBox"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="contact" class="section">
+                <h2>📧 Contact</h2>
+                <p>Portfolio généré avec BondAI</p>
+                <p>Stack: HTML5 + CSS3 + JavaScript ES6+</p>
+                <p>Performance maximale, aucune dépendance</p>
+            </section>
+        </main>
+    </div>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>

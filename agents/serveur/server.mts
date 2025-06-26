@@ -461,6 +461,59 @@ app.get('/conversations', authenticateToken, async (req: Request, res: Response)
   }
 });
 
+// Route pour télécharger les portfolios générés
+app.get('/download/:filename', async (req: Request, res: Response) => {
+  const { filename } = req.params;
+  
+  try {
+    console.log(`📥 Téléchargement demandé pour: ${filename}`);
+    
+    // Validation du nom de fichier pour sécurité
+    if (!filename.match(/^[a-zA-Z0-9-_]+\.zip$/)) {
+      return res.status(400).json({
+        error: 'Nom de fichier invalide',
+        message: 'Le fichier doit être un ZIP avec un nom valide'
+      });
+    }
+    
+    const filePath = path.join(process.cwd(), 'generated-portfolios', filename);
+    
+    // Vérifier que le fichier existe
+    try {
+      await import('fs').then(fs => fs.promises.access(filePath));
+    } catch {
+      return res.status(404).json({
+        error: 'Fichier non trouvé',
+        message: `Le portfolio ${filename} n'existe pas ou a expiré`
+      });
+    }
+    
+    // Envoyer le fichier
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('❌ Erreur lors du téléchargement:', err);
+        if (!res.headersSent) {
+          res.status(500).json({
+            error: 'Erreur lors du téléchargement',
+            message: err.message
+          });
+        }
+      } else {
+        console.log(`✅ Téléchargement réussi: ${filename}`);
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Erreur lors du téléchargement:', error);
+    res.status(500).json({
+      error: 'Erreur lors du téléchargement',
+      message: (error as Error).message
+    });
+  }
+});
+
 // Middleware de gestion des erreurs
 app.use(errorHandler);
 
@@ -476,7 +529,8 @@ app.use('*', (req: Request, res: Response) => {
       'POST /:agentId/stream',
       'POST /:agentId/stop',
       'GET /conversations',
-      'GET /conversations/:threadId'
+      'GET /conversations/:threadId',
+      'GET /download/:filename'
     ]
   });
 });
