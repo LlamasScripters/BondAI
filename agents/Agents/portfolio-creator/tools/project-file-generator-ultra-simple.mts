@@ -11,6 +11,15 @@ export const projectFileGeneratorUltraSimple = tool(
       
       // Créer le dossier de projet
       const projectPath = path.join(process.cwd(), 'generated-portfolios', projectName);
+      
+      // Nettoyer le dossier s'il existe déjà pour éviter les mélanges
+      try {
+        await fs.promises.rm(projectPath, { recursive: true, force: true });
+        console.log(`🧹 Dossier existant nettoyé: ${projectPath}`);
+      } catch (error) {
+        // Le dossier n'existait pas, c'est normal
+      }
+      
       await fs.promises.mkdir(projectPath, { recursive: true });
       
       let files: string[] = [];
@@ -70,7 +79,7 @@ async function generateReactProject(projectPath: string, userData: string, proje
   await fs.promises.mkdir(path.join(projectPath, 'public'), { recursive: true });
   
   // Parse user data pour les composants
-  const parsedUserData = parseUserData(userData);
+  const parsedUserData = parseUserData(userData, 'react');
   
   // package.json React
   const packageJson = {
@@ -419,19 +428,19 @@ export default Skills;`;
     {
       title: 'Plateforme E-commerce',
       description: 'Application complète avec paiement en ligne, gestion des stocks et dashboard admin.',
-      tech: ['React', 'Node.js', 'PostgreSQL'],
+      tech: ['React', 'TypeScript', 'Node.js'],
       image: 'https://via.placeholder.com/400x250?text=E-commerce+Platform'
     },
     {
       title: 'Dashboard Analytics',
       description: 'Interface de visualisation de données en temps réel avec graphiques interactifs.',
-      tech: ['Vue.js', 'D3.js', 'Express'],
+      tech: ['React', 'D3.js', 'TanStack Query'],
       image: 'https://via.placeholder.com/400x250?text=Analytics+Dashboard'
     },
     {
       title: 'Application Mobile',
       description: 'App hybride pour la gestion de tâches avec synchronisation cloud.',
-      tech: ['React Native', 'Firebase', 'Redux'],
+      tech: ['React Native', 'TypeScript', 'Firebase'],
       image: 'https://via.placeholder.com/400x250?text=Mobile+App'
     }
   ];
@@ -535,7 +544,7 @@ export default Contact;`;
   await fs.promises.writeFile(path.join(projectPath, 'src', 'components', 'Contact.tsx'), contactTsx);
 }
 
-function parseUserData(userData: string): any {
+function parseUserData(userData: string, selectedStack: 'react' | 'vue' | 'vanilla' = 'react'): any {
   try {
     const parsed = JSON.parse(userData);
     // S'assurer que les skills sont un tableau
@@ -543,11 +552,11 @@ function parseUserData(userData: string): any {
       // Nettoyer et valider les données
       return {
         name: parsed.name || parsed.personalInfo?.name || extractName(userData),
-        title: parsed.title || parsed.personalInfo?.title || extractTitle(userData),
+        title: parsed.title || parsed.personalInfo?.title || extractTitle(userData, selectedStack),
         skills: Array.isArray(parsed.skills) ? parsed.skills : 
                 Array.isArray(parsed.skills?.technical) ? parsed.skills.technical :
-                extractSkills(userData),
-        projects: Array.isArray(parsed.projects) ? parsed.projects : extractProjects(userData)
+                extractSkills(userData, selectedStack),
+        projects: Array.isArray(parsed.projects) ? parsed.projects : extractProjects(userData, selectedStack)
       };
     }
   } catch {
@@ -557,14 +566,14 @@ function parseUserData(userData: string): any {
   // Extraction simple depuis le texte
   const result = {
     name: extractName(userData),
-    title: extractTitle(userData),
-    skills: extractSkills(userData),
-    projects: extractProjects(userData)
+    title: extractTitle(userData, selectedStack),
+    skills: extractSkills(userData, selectedStack),
+    projects: extractProjects(userData, selectedStack)
   };
   
-  // Vérification finale que skills est un tableau
+  // Vérification finale que skills est un tableau avec defaults selon la stack
   if (!Array.isArray(result.skills)) {
-    result.skills = ['React', 'TypeScript', 'Node.js'];
+    result.skills = getDefaultSkills(selectedStack);
   }
   
   return result;
@@ -578,17 +587,21 @@ function extractName(text: string): string {
   return nameMatch ? nameMatch[1].trim() : 'Développeur';
 }
 
-function extractTitle(text: string): string {
+function extractTitle(text: string, selectedStack: 'react' | 'vue' | 'vanilla' = 'react'): string {
   if (text.includes('full-stack') || text.includes('fullstack')) return 'Développeur Full-Stack';
   if (text.includes('frontend') || text.includes('front-end')) return 'Développeur Frontend';
   if (text.includes('backend') || text.includes('back-end')) return 'Développeur Backend';
   if (text.includes('react')) return 'Développeur React';
   if (text.includes('vue')) return 'Développeur Vue.js';
   if (text.includes('symfony')) return 'Développeur PHP/Symfony';
-  return 'Développeur Web';
+  
+  // Titre par défaut selon la stack
+  if (selectedStack === 'vue') return 'Développeur Vue.js';
+  if (selectedStack === 'vanilla') return 'Développeur JavaScript';
+  return 'Développeur React';
 }
 
-function extractSkills(text: string): string[] {
+function extractSkills(text: string, selectedStack: 'react' | 'vue' | 'vanilla' = 'react'): string[] {
   const skills: string[] = [];
   const skillPatterns = [
     'typescript', 'javascript', 'react', 'vue', 'angular', 'node.js', 'nodejs', 'express',
@@ -612,15 +625,33 @@ function extractSkills(text: string): string[] {
     }
   });
   
-  // Retourner au moins quelques skills par défaut si rien trouvé
-  return skills.length > 0 ? [...new Set(skills)] : ['React', 'TypeScript', 'Node.js'];
+  // Retourner au moins quelques skills par défaut si rien trouvé selon la stack
+  return skills.length > 0 ? [...new Set(skills)] : getDefaultSkills(selectedStack);
 }
 
-function extractProjects(text: string): any[] {
-  // Projets par défaut si pas détectés
+function extractProjects(text: string, selectedStack: 'react' | 'vue' | 'vanilla' = 'react'): any[] {
+  // Projets par défaut si pas détectés selon la stack
+  if (selectedStack === 'vue') {
+    return [
+      { name: 'Application Vue', description: 'Application web moderne avec Vue.js', tech: ['Vue.js 3', 'TypeScript'] }
+    ];
+  } else if (selectedStack === 'vanilla') {
+    return [
+      { name: 'Site Web', description: 'Site web responsive en HTML/CSS/JS', tech: ['HTML5', 'CSS3', 'JavaScript'] }
+    ];
+  }
   return [
-    { name: 'Plateforme Web', description: 'Application web moderne', tech: ['React', 'Node.js'] }
+    { name: 'Application React', description: 'Application web moderne avec React', tech: ['React', 'TypeScript'] }
   ];
+}
+
+function getDefaultSkills(selectedStack: 'react' | 'vue' | 'vanilla'): string[] {
+  if (selectedStack === 'vue') {
+    return ['Vue.js 3', 'TypeScript', 'Composition API'];
+  } else if (selectedStack === 'vanilla') {
+    return ['HTML5', 'CSS3', 'JavaScript ES6+'];
+  }
+  return ['React', 'TypeScript', 'Node.js'];
 }
 
 function generateReactReadme(projectName: string, userData: any): string {
@@ -699,7 +730,7 @@ async function generateVueProject(projectPath: string, userData: string, project
   await fs.promises.mkdir(path.join(projectPath, 'public'), { recursive: true });
   
   // Parse user data pour les composants
-  const parsedUserData = parseUserData(userData);
+  const parsedUserData = parseUserData(userData, 'vue');
   
   // package.json Vue
   const packageJson = {
@@ -1124,20 +1155,20 @@ const projects = ref([
   {
     title: 'Plateforme E-commerce',
     description: 'Application complète avec paiement en ligne, gestion des stocks et dashboard admin.',
-    tech: ['Vue.js', 'Node.js', 'PostgreSQL'],
+    tech: ['Vue.js 3', 'TypeScript', 'Pinia'],
     image: 'https://via.placeholder.com/400x250?text=E-commerce+Platform'
   },
   {
     title: 'Dashboard Analytics',
     description: 'Interface de visualisation de données en temps réel avec graphiques interactifs.',
-    tech: ['Vue.js', 'D3.js', 'Express'],
+    tech: ['Vue.js 3', 'Composition API', 'Chart.js'],
     image: 'https://via.placeholder.com/400x250?text=Analytics+Dashboard'
   },
   {
-    title: 'Application Mobile',
-    description: 'App hybride pour la gestion de tâches avec synchronisation cloud.',
-    tech: ['Vue Native', 'Firebase', 'Pinia'],
-    image: 'https://via.placeholder.com/400x250?text=Mobile+App'
+    title: 'Application Web',
+    description: 'Application web responsive avec router et gestion d\'état moderne.',
+    tech: ['Vue.js 3', 'Vue Router', 'Vite'],
+    image: 'https://via.placeholder.com/400x250?text=Web+App'
   }
 ])
 </script>

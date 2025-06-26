@@ -115,11 +115,15 @@ Quelle option préférez-vous ?`;
       
       console.log('🔧 Appel tool projectFileGeneratorUltraSimple...');
       
+      // Générer un nom de projet unique avec la stack et timestamp
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+      const uniqueProjectName = `portfolio-${selectedStack}-${timestamp}`;
+      
       // Générer le projet
       const projectResult = await projectFileGeneratorUltraSimple.invoke({
         selectedStack,
         userStructuredData: structuredData,
-        projectName: "portfolio-hybrid"
+        projectName: uniqueProjectName
       });
       
       console.log('✅ GÉNÉRATION FORCÉE TERMINÉE');
