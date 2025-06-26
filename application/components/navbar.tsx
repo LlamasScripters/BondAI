@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -50,6 +51,12 @@ export default function Navbar() {
       description: "Feuilles de route automatisées"
     },
     { 
+      name: "Tarifs", 
+      href: "/pricing", 
+      icon: TrendingUp,
+      description: "Nos prix transparents"
+    },
+    { 
       name: "Mes Projets", 
       href: "/dashboard", 
       icon: Briefcase,
@@ -64,8 +71,8 @@ export default function Navbar() {
     { 
       name: "Comment ça marche", 
       href: "/comment-ca-marche", 
-      icon: TrendingUp,
-      description: "Découvrez SMP Platform"
+      icon: FileText,
+      description: "Découvrez BondAI"
     }
   ]
 
@@ -89,13 +96,27 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between px-4">
         
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600">
-            <Zap className="h-5 w-5 text-white" />
+        <Link href="/" className="flex items-center space-x-3">
+          <div className="relative w-20">
+            {/* Logo pour le mode clair */}
+            <Image
+              src="/Bond-ai_logo.png"
+              alt="BondAI Logo"
+              width={80}
+              height={80}
+              className="block dark:hidden object-contain"
+              priority
+            />
+            {/* Logo pour le mode sombre */}
+            <Image
+              src="/Bond-a_blanc.png"
+              alt="BondAI Logo"
+              width={80}
+              height={80}
+              className="hidden dark:block object-contain"
+              priority
+            />
           </div>
-          <span className="hidden text-xl font-bold sm:inline-block">
-            SMP Platform
-          </span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -103,27 +124,12 @@ export default function Navbar() {
           {navigationItems.map((item) => {
             const Icon = item.icon
             return (
-              <DropdownMenu key={item.name}>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2 h-auto p-2">
-                    <Icon className="h-4 w-4" />
-                    {item.name}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64">
-                  <DropdownMenuItem asChild>
-                    <Link href={item.href} className="flex flex-col items-start p-3">
-                      <div className="flex items-center gap-2 font-medium">
-                        <Icon className="h-4 w-4" />
-                        {item.name}
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {item.description}
-                      </p>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button key={item.name} variant="ghost" className="flex items-center gap-2 h-auto p-2" asChild>
+                <Link href={item.href}>
+                  <Icon className="h-4 w-4" />
+                  {item.name}
+                </Link>
+              </Button>
             )
           })}
         </div>

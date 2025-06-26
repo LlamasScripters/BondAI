@@ -143,7 +143,7 @@ export default function ServiceMarketplace() {
         {/* Hero Section with SMP positioning */}
         <div className="text-center mb-8 pt-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            SMP Platform - Services Management Platform
+            BondAI - Services Management Platform
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             La première marketplace qui génère automatiquement les portfolios de vos prestataires grâce à l'IA

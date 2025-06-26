@@ -149,7 +149,7 @@ export default function CommentCaMarchePage() {
     },
     {
       question: "Quelle est la différence avec Fiverr ou Upwork ?",
-      answer: "SMP Platform révolutionne 3 aspects : 1) Portfolios IA automatiques (vs manuels ailleurs), 2) Service Paths intelligents (vs recherche basique), 3) Contractualisation complète intégrée (vs négociation manuelle)."
+      answer: "BondAI révolutionne 3 aspects : 1) Portfolios IA automatiques (vs manuels ailleurs), 2) Service Paths intelligents (vs recherche basique), 3) Contractualisation complète intégrée (vs négociation manuelle)."
     },
     {
       question: "Le paiement escrow est-il vraiment sûr ?",
@@ -157,7 +157,7 @@ export default function CommentCaMarchePage() {
     },
     {
       question: "Combien coûte la génération de portfolio IA ?",
-      answer: "C'est GRATUIT pour tous les prestataires qui s'inscrivent sur SMP Platform. C'est notre façon d'attirer les meilleurs talents et de garantir un niveau de qualité exceptionnel sur notre marketplace."
+      answer: "C'est GRATUIT pour tous les prestataires qui s'inscrivent sur BondAI. C'est notre façon d'attirer les meilleurs talents et de garantir un niveau de qualité exceptionnel sur notre marketplace."
     },
     {
       question: "Les Service Paths sont-ils vraiment personnalisés ?",
@@ -183,7 +183,7 @@ export default function CommentCaMarchePage() {
       <div className="bg-gradient-to-b from-blue-50 to-white py-20">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold text-foreground mb-6">
-            Comment fonctionne SMP Platform ?
+            Comment fonctionne BondAI ?
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Découvrez la première marketplace qui génère automatiquement des portfolios IA 
@@ -224,7 +224,7 @@ export default function CommentCaMarchePage() {
             Choisissez votre parcours
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Client ou prestataire, SMP Platform s'adapte à vos besoins
+            Client ou prestataire, BondAI s'adapte à vos besoins
           </p>
         </div>
 
@@ -382,7 +382,7 @@ export default function CommentCaMarchePage() {
               Questions fréquentes
             </h2>
             <p className="text-lg text-muted-foreground">
-              Tout ce que vous devez savoir sur SMP Platform
+              Tout ce que vous devez savoir sur BondAI
             </p>
           </div>
 

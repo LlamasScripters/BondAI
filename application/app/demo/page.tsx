@@ -103,7 +103,7 @@ export default function DemoPage() {
         {/* Header */}
         <div className="text-center mb-8 pt-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            🎯 Démo SMP Platform
+            🎯 Démo BondAI
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             La révolution du marketplace avec portfolios IA automatiques
@@ -257,7 +257,7 @@ export default function DemoPage() {
             🚀 Prêt à révolutionner votre marketplace ?
           </h2>
           <p className="text-green-700 mb-6">
-            SMP Platform + Portfolio IA = La combinaison gagnante pour dominer le marché
+            BondAI + Portfolio IA = La combinaison gagnante pour dominer le marché
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Button size="lg" asChild className="bg-green-600 hover:bg-green-700">
