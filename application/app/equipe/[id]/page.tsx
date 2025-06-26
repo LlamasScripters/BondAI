@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, use } from "react"
 import {
   ArrowLeft,
   Star,
@@ -182,9 +182,10 @@ const mockTeamData: TeamData = {
   successRate: 98,
 }
 
-export default function EquipeDetailPage({ params }: { params: { id: string } }) {
+export default function EquipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [activeTab, setActiveTab] = useState("overview")
-  const team = mockTeamData // En réalité, fetch basé sur params.id
+  const resolvedParams = use(params)
+  const team = mockTeamData // En réalité, fetch basé sur resolvedParams.id
 
   return (
     <div className="min-h-screen bg-background">

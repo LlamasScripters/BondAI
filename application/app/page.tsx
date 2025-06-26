@@ -98,6 +98,7 @@ const recommendedTeams = [
 
 export default function ServiceMarketplace() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [nameFilter, setNameFilter] = useState("")
   const [selectedServices, setSelectedServices] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState("all")
 
@@ -105,11 +106,14 @@ export default function ServiceMarketplace() {
     if (activeTab === "human" && service.type !== "human") return false
     if (activeTab === "ai" && service.type !== "ai") return false
     if (searchQuery) {
-      return (
+      const matchesMainSearch = 
         service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         service.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         service.skills.some((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
+      if (!matchesMainSearch) return false
+    }
+    if (nameFilter) {
+      return service.name.toLowerCase().includes(nameFilter.toLowerCase())
     }
     return true
   })
@@ -215,12 +219,10 @@ export default function ServiceMarketplace() {
               </div>
             </CardContent>
           </Card>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        )}        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="all">Tous les services</TabsTrigger>
                 <TabsTrigger value="human">Prestataires humains</TabsTrigger>
@@ -228,8 +230,61 @@ export default function ServiceMarketplace() {
               </TabsList>
             </Tabs>
 
+            {/* Search by Name */}
+            <div className="mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Rechercher par nom... (ex: Marie, CodeAssistant)"
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                  className="pl-10 pr-4 py-2 border-gray-200"
+                />
+                {nameFilter && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                    onClick={() => setNameFilter("")}
+                  >
+                    ×
+                  </Button>
+                )}
+              </div>
+              {nameFilter && (
+                <div className="mt-2 text-sm text-gray-600">
+                  {filteredServices.length} résultat(s) pour "{nameFilter}"
+                </div>
+              )}
+            </div>
+
             <div className="space-y-4">
-              {filteredServices.map((service) => (
+              {filteredServices.length === 0 ? (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <div className="text-gray-500 mb-4">
+                      <Search className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <h3 className="text-lg font-medium mb-2">Aucun résultat trouvé</h3>
+                      <p className="text-sm">
+                        {nameFilter 
+                          ? `Aucun prestataire trouvé pour "${nameFilter}"`
+                          : "Essayez d'ajuster vos critères de recherche"
+                        }
+                      </p>
+                    </div>
+                    {nameFilter && (
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setNameFilter("")}
+                        className="mt-4"
+                      >
+                        Effacer le filtre par nom
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              ) : (
+                filteredServices.map((service) => (
                 <Card key={service.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
@@ -306,13 +361,12 @@ export default function ServiceMarketplace() {
                         <Link href={`/profil/${service.id}`}>
                           <Button variant="ghost" size="sm">
                             Voir profil
-                          </Button>
-                        </Link>
+                          </Button>                        </Link>
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>              ))
+              )}
             </div>
           </div>
 
@@ -364,16 +418,14 @@ export default function ServiceMarketplace() {
                     <span className="font-medium text-sm">TestBot AI</span>
                   </div>
                   <p className="text-xs text-gray-600">Tests automatisés</p>
-                </div>
-                <div className="p-3 border rounded-lg">
+                </div>                <div className="p-3 border rounded-lg">
                   <div className="flex items-center gap-2 mb-1">
                     <Bot className="h-4 w-4 text-blue-600" />
                     <span className="font-medium text-sm">SEO Optimizer</span>
                   </div>
                   <p className="text-xs text-gray-600">Optimisation SEO</p>
                 </div>
-              </CardContent>
-            </Card>
+              </CardContent>            </Card>
           </div>
         </div>
       </div>
