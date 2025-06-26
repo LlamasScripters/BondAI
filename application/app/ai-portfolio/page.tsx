@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Send, Download, Eye, Palette, Sparkles } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Loader2, Send, Download, Eye, Palette, Sparkles, ExternalLink, Rocket } from "lucide-react"
 import { agentsAPI } from "@/lib/api"
 
 interface Message {
@@ -25,6 +27,24 @@ export default function AIPortfolioPage() {
   const [generatedPortfolios, setGeneratedPortfolios] = useState<any[]>([])
   const [isGeneratingProject, setIsGeneratingProject] = useState(false)
   const [lastProjectData, setLastProjectData] = useState<any>(null)
+  const [isDeployingToVercel, setIsDeployingToVercel] = useState(false)
+  const [vercelToken, setVercelToken] = useState("")
+  const [showVercelModal, setShowVercelModal] = useState(false)
+  const [currentDeploymentFile, setCurrentDeploymentFile] = useState<{filename: string, projectData: any} | null>(null)
+
+  const generateSafeProjectName = (originalName?: string) => {
+    if (!originalName) {
+      return `portfolio-${Date.now()}`
+    }
+    
+    // Générer un nom sûr pour Vercel
+    return originalName
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/--+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .substring(0, 50) // Limiter à 50 caractères pour éviter les noms trop longs
+  }
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
@@ -278,6 +298,75 @@ Utilise projectFileGenerator pour créer un projet React complet avec tous les f
     "Suggère-moi des compétences pour un poste de chef de projet"
   ]
 
+  const deployToVercel = async (filename: string, projectData: any) => {
+    if (!vercelToken.trim()) {
+      setCurrentDeploymentFile({filename, projectData})
+      setShowVercelModal(true)
+      return
+    }
+
+    setIsDeployingToVercel(true)
+    try {
+      console.log('🚀 Déploiement sur Vercel...', filename)
+      
+      const serverUrl = process.env.NEXT_PUBLIC_AGENTS_SERVER_URL || 'http://localhost:8000'
+      const response = await fetch(`${serverUrl}/deploy-to-vercel/${filename}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          vercelToken: vercelToken,
+          projectName: generateSafeProjectName(projectData.projectName),
+          teamId: null // Optionnel
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Erreur lors du déploiement')
+      }
+
+      const result = await response.json()
+      console.log('✅ Déploiement réussi:', result)
+
+      // Ajouter l'URL de déploiement au message
+      const deploymentMessage: Message = {
+        role: 'assistant',
+        content: `🎉 **Déploiement Vercel réussi !**
+
+Votre portfolio a été déployé avec succès sur Vercel.
+
+🔗 **URL de production :** ${result.deployment.url}
+
+Votre site est maintenant en ligne et accessible à tous ! Vous pouvez partager cette URL directement.`,
+        timestamp: new Date(),
+        projectData: {
+          ...projectData,
+          vercelUrl: result.deployment.url,
+          deploymentId: result.deployment.id
+        }
+      }
+
+      setMessages(prev => [...prev, deploymentMessage])
+      alert(`✅ Déploiement réussi ! Votre site est disponible à : ${result.deployment.url}`)
+      
+    } catch (error) {
+      console.error('❌ Erreur déploiement Vercel:', error)
+      alert(`❌ Erreur lors du déploiement : ${error.message}`)
+    } finally {
+      setIsDeployingToVercel(false)
+    }
+  }
+
+  const handleVercelTokenSubmit = () => {
+    if (vercelToken.trim() && currentDeploymentFile) {
+      setShowVercelModal(false)
+      deployToVercel(currentDeploymentFile.filename, currentDeploymentFile.projectData)
+      setCurrentDeploymentFile(null)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-6xl mx-auto">
@@ -403,7 +492,7 @@ Utilise projectFileGenerator pour créer un projet React complet avec tous les f
                             <div className="text-sm font-medium text-green-600">
                               ✅ Projet complet généré avec succès !
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-wrap">
                               <Button
                                 size="sm"
                                 onClick={() => downloadProjectZip(
@@ -413,12 +502,49 @@ Utilise projectFileGenerator pour créer un projet React complet avec tous les f
                                 className="flex items-center gap-1 bg-green-600 hover:bg-green-700"
                               >
                                 <Download className="h-3 w-3" />
-                                Télécharger Projet ZIP
+                                Télécharger ZIP
                               </Button>
+                              
+                              <Button
+                                size="sm"
+                                onClick={() => deployToVercel(
+                                  message.projectData.downloadUrl.split('/').pop(),
+                                  message.projectData
+                                )}
+                                disabled={isDeployingToVercel}
+                                className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700"
+                              >
+                                {isDeployingToVercel ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <Rocket className="h-3 w-3" />
+                                )}
+                                Déployer sur Vercel
+                              </Button>
+                              
                               <div className="text-xs text-gray-500 self-center">
                                 {message.projectData.files?.length || 0} fichiers
                               </div>
                             </div>
+                            
+                            {/* Afficher l'URL Vercel si disponible */}
+                            {message.projectData.vercelUrl && (
+                              <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div className="text-sm font-medium text-blue-800 mb-1">
+                                  🌐 Site déployé sur Vercel
+                                </div>
+                                <a 
+                                  href={message.projectData.vercelUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 underline text-sm flex items-center gap-1"
+                                >
+                                  {message.projectData.vercelUrl}
+                                  <ExternalLink className="h-3 w-3" />
+                                </a>
+                              </div>
+                            )}
+                            
                             {message.projectData.stackInfo && (
                               <div className="text-xs text-gray-600 mt-1">
                                 Stack: {message.projectData.stackInfo.split('\n')[0].replace('**Stack:** ', '')}
@@ -508,8 +634,79 @@ Utilise projectFileGenerator pour créer un projet React complet avec tous les f
           </div>
         )}
 
+        {/* Modal pour le token Vercel */}
+        {showVercelModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-full max-w-md mx-4">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Rocket className="h-5 w-5 text-blue-600" />
+                  Déploiement sur Vercel
+                </CardTitle>
+                <CardDescription>
+                  Entrez votre token d'API Vercel pour déployer automatiquement votre portfolio
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="vercel-token">Token d'API Vercel</Label>
+                  <Input
+                    id="vercel-token"
+                    type="password"
+                    placeholder="vercel_xxxxxxxxxxxx"
+                    value={vercelToken}
+                    onChange={(e) => setVercelToken(e.target.value)}
+                    className="mt-1"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Créez un token sur{" "}
+                    <a 
+                      href="https://vercel.com/account/tokens" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      vercel.com/account/tokens
+                    </a>
+                  </p>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleVercelTokenSubmit}
+                    disabled={!vercelToken.trim() || isDeployingToVercel}
+                    className="flex-1"
+                  >
+                    {isDeployingToVercel ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Déploiement...
+                      </>
+                    ) : (
+                      <>
+                        <Rocket className="h-4 w-4 mr-2" />
+                        Déployer
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setShowVercelModal(false)
+                      setCurrentDeploymentFile(null)
+                    }}
+                    disabled={isDeployingToVercel}
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Actions rapides */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="p-4 text-center">
             <Eye className="h-8 w-8 mx-auto mb-2 text-blue-600" />
             <h3 className="font-semibold mb-1">Prévisualisation Live</h3>
@@ -520,15 +717,23 @@ Utilise projectFileGenerator pour créer un projet React complet avec tous les f
           
           <Card className="p-4 text-center">
             <Download className="h-8 w-8 mx-auto mb-2 text-green-600" />
-            <h3 className="font-semibold mb-1">Export HTML Complet</h3>
+            <h3 className="font-semibold mb-1">Export ZIP Complet</h3>
             <p className="text-sm text-muted-foreground">
-              Téléchargez le fichier HTML prêt à déployer
+              Téléchargez le projet complet prêt à déployer
+            </p>
+          </Card>
+          
+          <Card className="p-4 text-center">
+            <Rocket className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+            <h3 className="font-semibold mb-1">Déploiement Vercel</h3>
+            <p className="text-sm text-muted-foreground">
+              Déployez automatiquement sur Vercel en un clic
             </p>
           </Card>
           
           <Card className="p-4 text-center">
             <Palette className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-            <h3 className="font-semibold mb-1">4 Thèmes Modernes</h3>
+            <h3 className="font-semibold mb-1">Thèmes Modernes</h3>
             <p className="text-sm text-muted-foreground">
               Modern, Dark, Minimal, Creative avec animations
             </p>

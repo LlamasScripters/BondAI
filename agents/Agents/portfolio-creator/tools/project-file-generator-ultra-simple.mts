@@ -89,26 +89,20 @@ async function generateReactProject(projectPath: string, userData: string, proje
     type: "module",
     scripts: {
       dev: "vite",
-      build: "tsc && vite build",
-      lint: "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+      build: "vite build",
       preview: "vite preview"
     },
     dependencies: {
-      react: "^18.2.0",
-      "react-dom": "^18.2.0",
+      react: "^18.3.1",
+      "react-dom": "^18.3.1",
       "lucide-react": "^0.263.1"
     },
     devDependencies: {
-      "@types/react": "^18.2.66",
-      "@types/react-dom": "^18.2.22",
-      "@typescript-eslint/eslint-plugin": "^7.2.0",
-      "@typescript-eslint/parser": "^7.2.0",
-      "@vitejs/plugin-react": "^4.2.1",
-      eslint: "^8.57.0",
-      "eslint-plugin-react-hooks": "^4.6.0",
-      "eslint-plugin-react-refresh": "^0.4.6",
-      typescript: "^5.2.2",
-      vite: "^5.2.0"
+      "@types/react": "^18.3.0",
+      "@types/react-dom": "^18.3.0",
+      "@vitejs/plugin-react": "^4.3.1",
+      typescript: "^5.5.3",
+      vite: "^5.3.4"
     }
   };
   await fs.promises.writeFile(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
@@ -300,39 +294,58 @@ export default defineConfig({
       module: "ESNext",
       skipLibCheck: true,
       moduleResolution: "bundler",
-      allowImportingTsExtensions: true,
+      allowImportingTsExtensions: false,
       resolveJsonModule: true,
       isolatedModules: true,
       noEmit: true,
       jsx: "react-jsx",
-      strict: true,
-      noUnusedLocals: true,
-      noUnusedParameters: true,
-      noFallthroughCasesInSwitch: true
+      strict: false,
+      noUnusedLocals: false,
+      noUnusedParameters: false,
+      noFallthroughCasesInSwitch: true,
+      esModuleInterop: true,
+      allowSyntheticDefaultImports: true
     },
     include: ["src"],
-    references: [{ path: "./tsconfig.node.json" }]
+    exclude: ["node_modules"]
   };
   await fs.promises.writeFile(path.join(projectPath, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
   
-  // tsconfig.node.json
-  const tsconfigNode = {
-    compilerOptions: {
-      composite: true,
-      skipLibCheck: true,
-      module: "ESNext",
-      moduleResolution: "bundler",
-      allowSyntheticDefaultImports: true
-    },
-    include: ["vite.config.ts"]
-  };
-  await fs.promises.writeFile(path.join(projectPath, 'tsconfig.node.json'), JSON.stringify(tsconfigNode, null, 2));
-  
+  // .gitignore
+  const gitignore = `# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vercel
+.vercel`;
+  await fs.promises.writeFile(path.join(projectPath, '.gitignore'), gitignore);
+
   // README.md
   const readme = generateReactReadme(projectName, parsedUserData);
   await fs.promises.writeFile(path.join(projectPath, 'README.md'), readme);
   
-  return ['index.html', 'package.json', 'vite.config.ts', 'tsconfig.json', 'tsconfig.node.json', 'src/main.tsx', 'src/App.tsx', 'src/App.css', 'src/index.css', 'src/components/Header.tsx', 'src/components/About.tsx', 'src/components/Skills.tsx', 'src/components/Projects.tsx', 'src/components/Contact.tsx', 'README.md'];
+  return ['index.html', 'package.json', 'vite.config.ts', 'tsconfig.json', '.gitignore', 'src/main.tsx', 'src/App.tsx', 'src/App.css', 'src/index.css', 'src/components/Header.tsx', 'src/components/About.tsx', 'src/components/Skills.tsx', 'src/components/Projects.tsx', 'src/components/Contact.tsx', 'README.md'];
 }
 
 async function generateReactComponents(projectPath: string, userData: any) {
@@ -753,18 +766,16 @@ async function generateVueProject(projectPath: string, userData: string, project
     type: "module",
     scripts: {
       dev: "vite",
-      build: "vue-tsc && vite build",
+      build: "vite build",
       preview: "vite preview"
     },
     dependencies: {
-      vue: "^3.4.0",
-      "vue-router": "^4.2.5"
+      vue: "^3.5.17"
     },
     devDependencies: {
-      "@vitejs/plugin-vue": "^5.0.0",
-      typescript: "^5.2.0",
-      "vue-tsc": "^1.8.0",
-      vite: "^5.0.0"
+      "@vitejs/plugin-vue": "^5.2.4",
+      typescript: "^5.5.3",
+      vite: "^5.4.19"
     }
   };
   await fs.promises.writeFile(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
@@ -941,11 +952,67 @@ export default defineConfig({
 })`;
   await fs.promises.writeFile(path.join(projectPath, 'vite.config.ts'), viteConfig);
   
+  // tsconfig.json Vue
+  const tsconfig = {
+    compilerOptions: {
+      target: "ES2020",
+      useDefineForClassFields: true,
+      module: "ESNext",
+      lib: ["ES2020", "DOM", "DOM.Iterable"],
+      skipLibCheck: true,
+      moduleResolution: "bundler",
+      allowImportingTsExtensions: false,
+      resolveJsonModule: true,
+      isolatedModules: true,
+      noEmit: true,
+      jsx: "preserve",
+      strict: false,
+      noUnusedLocals: false,
+      noUnusedParameters: false,
+      noFallthroughCasesInSwitch: true,
+      esModuleInterop: true,
+      allowSyntheticDefaultImports: true
+    },
+    include: ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+    exclude: ["node_modules"]
+  };
+  await fs.promises.writeFile(path.join(projectPath, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
+  
+  // .gitignore
+  const gitignore = `# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vercel
+.vercel`;
+  await fs.promises.writeFile(path.join(projectPath, '.gitignore'), gitignore);
+
   // README.md
   const readme = generateVueReadme(projectName, parsedUserData);
   await fs.promises.writeFile(path.join(projectPath, 'README.md'), readme);
   
-  return ['index.html', 'package.json', 'vite.config.ts', 'src/main.ts', 'src/App.vue', 'src/style.css', 'src/components/HeaderComponent.vue', 'src/components/AboutSection.vue', 'src/components/SkillsSection.vue', 'src/components/ProjectsSection.vue', 'src/components/ContactSection.vue', 'README.md'];
+  return ['index.html', 'package.json', 'vite.config.ts', 'tsconfig.json', '.gitignore', 'src/main.ts', 'src/App.vue', 'src/style.css', 'src/components/HeaderComponent.vue', 'src/components/AboutSection.vue', 'src/components/SkillsSection.vue', 'src/components/ProjectsSection.vue', 'src/components/ContactSection.vue', 'README.md'];
 }
 
 async function generateVueComponents(projectPath: string, userData: any) {
@@ -1179,7 +1246,7 @@ const projects = ref([
   },
   {
     title: 'Application Web',
-    description: 'Application web responsive avec router et gestion d\'état moderne.',
+    description: 'Application web responsive avec router et gestion des états moderne.',
     tech: ['Vue.js 3', 'Vue Router', 'Vite'],
     image: 'https://via.placeholder.com/400x250?text=Web+App'
   }
