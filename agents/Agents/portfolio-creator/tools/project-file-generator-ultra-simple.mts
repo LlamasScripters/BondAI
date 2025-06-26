@@ -315,11 +315,24 @@ export default defineConfig({
   };
   await fs.promises.writeFile(path.join(projectPath, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
   
+  // tsconfig.node.json
+  const tsconfigNode = {
+    compilerOptions: {
+      composite: true,
+      skipLibCheck: true,
+      module: "ESNext",
+      moduleResolution: "bundler",
+      allowSyntheticDefaultImports: true
+    },
+    include: ["vite.config.ts"]
+  };
+  await fs.promises.writeFile(path.join(projectPath, 'tsconfig.node.json'), JSON.stringify(tsconfigNode, null, 2));
+  
   // README.md
   const readme = generateReactReadme(projectName, parsedUserData);
   await fs.promises.writeFile(path.join(projectPath, 'README.md'), readme);
   
-  return ['index.html', 'package.json', 'vite.config.ts', 'tsconfig.json', 'src/main.tsx', 'src/App.tsx', 'src/App.css', 'src/index.css', 'src/components/Header.tsx', 'src/components/About.tsx', 'src/components/Skills.tsx', 'src/components/Projects.tsx', 'src/components/Contact.tsx', 'README.md'];
+  return ['index.html', 'package.json', 'vite.config.ts', 'tsconfig.json', 'tsconfig.node.json', 'src/main.tsx', 'src/App.tsx', 'src/App.css', 'src/index.css', 'src/components/Header.tsx', 'src/components/About.tsx', 'src/components/Skills.tsx', 'src/components/Projects.tsx', 'src/components/Contact.tsx', 'README.md'];
 }
 
 async function generateReactComponents(projectPath: string, userData: any) {
