@@ -1,120 +1,304 @@
 "use client"
-import { Moon, Sun, Bot, Plus, Monitor, ChevronDown, LayoutDashboard, ShoppingCart, Store, HelpCircle, Palette } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+
+import { useState } from "react"
 import Link from "next/link"
-import { useTheme } from "next-themes"
-import { usePathname } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { User } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { 
+  Search, 
+  Menu, 
+  X, 
+  User, 
+  Settings, 
+  LogOut, 
+  Bell,
+  ShoppingCart,
+  Briefcase,
+  Users,
+  Zap,
+  FileText,
+  TrendingUp,
+  Lightbulb,
+  Play
+} from "lucide-react"
 
-export function Navbar() {
-  const { theme, setTheme } = useTheme()
-  const pathname = usePathname()
+export default function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [cartCount] = useState(3) // Mock cart count
+  const [notificationCount] = useState(2) // Mock notification count
 
-  const navItems = [
-    { href: "/", label: "Accueil" },
-    { href: "/comment-ca-marche", label: "Comment ça marche" },
-    { href: "/ai-portfolio", label: "Portfolio AI", icon: Palette },
+  const navigationItems = [
+    { 
+      name: "Services", 
+      href: "/", 
+      icon: Search,
+      description: "Trouvez le prestataire parfait"
+    },
+    { 
+      name: "Service Paths", 
+      href: "/service-paths", 
+      icon: Lightbulb,
+      description: "Feuilles de route automatisées"
+    },
+    { 
+      name: "Mes Projets", 
+      href: "/dashboard", 
+      icon: Briefcase,
+      description: "Gérez vos projets en cours"
+    },
+    { 
+      name: "Équipes", 
+      href: "/equipe", 
+      icon: Users,
+      description: "Équipes recommandées"
+    },
+    { 
+      name: "Comment ça marche", 
+      href: "/comment-ca-marche", 
+      icon: TrendingUp,
+      description: "Découvrez SMP Platform"
+    }
+  ]
+
+  const quickActions = [
+    {
+      name: "🎯 DÉMO LIVE",
+      href: "/demo",
+      icon: Play,
+      variant: "default" as const
+    },
+    {
+      name: "Portfolio IA",
+      href: "/ai-portfolio", 
+      icon: FileText,
+      variant: "outline" as const
+    }
   ]
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo et titre */}
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <Bot className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-foreground">BondIa</span>
-          </Link>          {/* Navigation centrale */}
-          <div className="hidden md:flex items-center gap-2">
-            {navItems.map((item) => {
-              const Icon = item.icon
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between px-4">
+        
+        {/* Logo */}
+        <Link href="/" className="flex items-center space-x-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600">
+            <Zap className="h-5 w-5 text-white" />
+          </div>
+          <span className="hidden text-xl font-bold sm:inline-block">
+            SMP Platform
+          </span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex lg:items-center lg:space-x-8">
+          {navigationItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <DropdownMenu key={item.name}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2 h-auto p-2">
+                    <Icon className="h-4 w-4" />
+                    {item.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-64">
+                  <DropdownMenuItem asChild>
+                    <Link href={item.href} className="flex flex-col items-start p-3">
+                      <div className="flex items-center gap-2 font-medium">
+                        <Icon className="h-4 w-4" />
+                        {item.name}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {item.description}
+                      </p>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )
+          })}
+        </div>
+
+        {/* Quick Actions & User Menu */}
+        <div className="flex items-center space-x-4">
+          
+          {/* Quick Actions */}
+          <div className="hidden md:flex items-center space-x-2">
+            {quickActions.map((action) => {
+              const Icon = action.icon
               return (
                 <Button
-                  key={item.href}
-                  variant={pathname === item.href ? "default" : "ghost"}
+                  key={action.name}
+                  variant={action.variant}
+                  size="sm"
                   asChild
                   className="flex items-center gap-2"
                 >
-                  <Link href={item.href}>
-                    {Icon && <Icon className="h-4 w-4" />}
-                    {item.label}
+                  <Link href={action.href}>
+                    <Icon className="h-4 w-4" />
+                    {action.name}
                   </Link>
                 </Button>
               )
             })}
-          </div>{/* Actions à droite */}
-          <div className="flex items-center gap-2">
-            
-            {/* Dashboard link */}
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                <LayoutDashboard className="h-4 w-4 mr-2" />
-                Dashboard
-              </Button>
-            </Link>
-
-            {/* Panier link */}
-            <Link href="/panier">
-              <Button variant="ghost" size="sm">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Panier
-              </Button>
-            </Link>
-
-            {/* Theme dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <ChevronDown className="h-3 w-3 ml-1" />
-                  <span className="sr-only">Toggle theme</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  <Sun className="h-4 w-4 mr-2" />
-                  Clair
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  <Moon className="h-4 w-4 mr-2" />
-                  Sombre
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  <Monitor className="h-4 w-4 mr-2" />
-                  Système
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* CTA Proposer une prestation */}
-            <Link href="/proposer">
-              <Button variant="ghost" size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Proposer
-              </Button>
-            </Link>
-
-            {/* Menu mobile */}
-            <div className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </Button>
-            </div>
-
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Avatar" />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
           </div>
+
+          {/* Cart */}
+          <Link href="/panier">
+            <Button variant="ghost" size="sm" className="relative">
+              <ShoppingCart className="h-5 w-5" />
+              {cartCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                >
+                  {cartCount}
+                </Badge>
+              )}
+            </Button>
+          </Link>
+
+          {/* Notifications */}
+          <Button variant="ghost" size="sm" className="relative">
+            <Bell className="h-5 w-5" />
+            {notificationCount > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+              >
+                {notificationCount}
+              </Badge>
+            )}
+          </Button>
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
+          {/* User Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/avatars/01.png" alt="@username" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <div className="flex items-center justify-start gap-2 p-2">
+                <div className="flex flex-col space-y-1 leading-none">
+                  <p className="font-medium">John Doe</p>
+                  <p className="w-[200px] truncate text-sm text-muted-foreground">
+                    john.doe@example.com
+                  </p>
+                </div>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/profil/1" className="flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Mon Profil</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard" className="flex items-center">
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  <span>Mes Projets</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/contractualisation" className="flex items-center">
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>Mes Contrats</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Paramètres</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Se déconnecter</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="lg:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="lg:hidden border-t bg-background">
+          <div className="container py-4 space-y-4">
+            
+            {/* Quick Actions Mobile */}
+            <div className="flex flex-col space-y-2">
+              {quickActions.map((action) => {
+                const Icon = action.icon
+                return (
+                  <Button
+                    key={action.name}
+                    variant={action.variant}
+                    size="sm"
+                    asChild
+                    className="justify-start"
+                  >
+                    <Link 
+                      href={action.href}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Icon className="h-4 w-4 mr-2" />
+                      {action.name}
+                    </Link>
+                  </Button>
+                )
+              })}
+            </div>
+
+            {/* Navigation Items Mobile */}
+            <div className="space-y-2">
+              {navigationItems.map((item) => {
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <Icon className="h-5 w-5" />
+                    <div>
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {item.description}
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   )
 }

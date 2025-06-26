@@ -418,7 +418,7 @@ Votre site est maintenant en ligne et accessible à tous ! Vous pouvez partager 
                   onClick={generateCompletePortfolio}
                 >
                   <Sparkles className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <span className="block">Générer un portfolio HTML complet (démo)</span>
+                  <span className="block">Générer un portfolio complet (démo)</span>
                 </Button>
               </CardContent>
             </Card>

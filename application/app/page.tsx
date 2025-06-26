@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Star, Bot, User, Plus, ShoppingCart, Zap, Filter } from "lucide-react"
+import { Search, Star, Bot, User, Plus, ShoppingCart, Zap, Filter, Lightbulb, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,17 +26,30 @@ interface Service {
 
 const mockServices: Service[] = [
   {
+    id: "0",
+    name: "Portfolio IA Generator",
+    type: "ai",
+    rating: 5.0,
+    reviews: 127,
+    price: "GRATUIT",
+    description: "Agent IA qui génère automatiquement des portfolios professionnels. Déploiement Vercel inclus.",
+    skills: ["Portfolio Generation", "IA", "Vercel Deploy", "Professional Design"],
+    avatar: "/placeholder.svg?height=40&width=40",
+    isOnline: true,
+    collaborators: ["1", "2"],
+  },
+  {
     id: "1",
     name: "Marie Dubois",
     type: "human",
     rating: 4.9,
     reviews: 127,
     price: "45€/h",
-    description: "Développeuse React/Next.js avec 8 ans d'expérience. Spécialisée dans les applications web modernes.",
+    description: "Développeuse React/Next.js avec 8 ans d'expérience. Portfolio généré automatiquement par SMP IA.",
     skills: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
     avatar: "/placeholder.svg?height=40&width=40",
     isOnline: true,
-    collaborators: ["2", "3"],
+    collaborators: ["0", "3"],
   },
   {
     id: "2",
@@ -127,13 +140,65 @@ export default function ServiceMarketplace() {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Page Title */}
+        {/* Hero Section with SMP positioning */}
         <div className="text-center mb-8 pt-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Découvrez nos services</h1>
-          <p className="text-lg text-muted-foreground">
-            Trouvez le prestataire parfait grâce à la recherche en langage naturel
+          <h1 className="text-4xl font-bold text-foreground mb-4">
+            SMP Platform - Services Management Platform
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+            La première marketplace qui génère automatiquement les portfolios de vos prestataires grâce à l'IA
           </p>
-        </div>        {/* Search Bar */}
+          
+          {/* Value Proposition Cards */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Card className="p-6 text-center">
+              <Zap className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Portfolio IA Automatique</h3>
+              <p className="text-sm text-muted-foreground">
+                Prestataires professionnels en 2 minutes au lieu de 2 semaines
+              </p>
+            </Card>
+            <Card className="p-6 text-center">
+              <Bot className="h-12 w-12 text-green-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Service Paths Intelligents</h3>
+              <p className="text-sm text-muted-foreground">
+                Feuilles de route personnalisées générées par IA
+              </p>
+            </Card>
+            <Card className="p-6 text-center">
+              <Shield className="h-12 w-12 text-purple-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Paiement Sécurisé</h3>
+              <p className="text-sm text-muted-foreground">
+                Contractualisation automatique + escrow intégré
+              </p>
+            </Card>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex flex-col md:flex-row gap-4 justify-center mb-8">
+            <Button size="lg" asChild className="bg-gradient-to-r from-blue-600 to-indigo-600">
+              <Link href="/ai-portfolio">
+                <Lightbulb className="h-5 w-5 mr-2" />
+                Créer mon Portfolio IA (GRATUIT)
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild>
+              <Link href="/service-paths">
+                <Zap className="h-5 w-5 mr-2" />
+                Générer mes Service Paths
+              </Link>
+            </Button>
+          </div>
+
+          {/* Social Proof */}
+          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+            <p className="text-green-800 font-medium">
+              🎉 Déjà 127 portfolios générés automatiquement • 89% des prestataires recommandent SMP
+            </p>
+          </div>
+        </div>
+
+        {/* Search Bar */}
         <Card className="mb-8 border-2 border-dashed border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <CardContent className="p-8">
             <div className="text-center mb-6">
