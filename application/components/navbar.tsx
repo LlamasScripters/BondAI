@@ -29,7 +29,9 @@ import {
   FileText,
   TrendingUp,
   Lightbulb,
-  Play
+  Play,
+  Bot,
+  Plus
 } from "lucide-react"
 
 export default function Navbar() {
@@ -81,6 +83,12 @@ export default function Navbar() {
       name: "Portfolio IA",
       href: "/ai-portfolio", 
       icon: FileText,
+      variant: "outline" as const
+    },
+    {
+      name: "Ajouter Agent IA",
+      href: "/ajouter-agent",
+      icon: Bot,
       variant: "outline" as const
     }
   ]
@@ -219,6 +227,12 @@ export default function Navbar() {
                 <Link href="/contractualisation" className="flex items-center">
                   <FileText className="mr-2 h-4 w-4" />
                   <span>Mes Contrats</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/ajouter-agent" className="flex items-center">
+                  <Bot className="mr-2 h-4 w-4" />
+                  <span>Ajouter Agent IA</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
