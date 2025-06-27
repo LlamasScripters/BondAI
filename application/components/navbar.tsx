@@ -63,12 +63,6 @@ export default function Navbar() {
       description: "Gérez vos projets en cours"
     },
     { 
-      name: "Équipes", 
-      href: "/equipe", 
-      icon: Users,
-      description: "Équipes recommandées"
-    },
-    { 
       name: "Comment ça marche", 
       href: "/comment-ca-marche", 
       icon: FileText,
