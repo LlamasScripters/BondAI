@@ -29,9 +29,7 @@ import {
   FileText,
   TrendingUp,
   Lightbulb,
-  Play,
-  Bot,
-  Plus
+  Bot
 } from "lucide-react"
 
 export default function Navbar() {
@@ -73,12 +71,6 @@ export default function Navbar() {
   ]
 
   const quickActions = [
-    {
-      name: "🎯 DÉMO LIVE",
-      href: "/demo",
-      icon: Play,
-      variant: "default" as const
-    },
     {
       name: "Portfolio IA",
       href: "/ai-portfolio", 
