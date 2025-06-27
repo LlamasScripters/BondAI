@@ -2,11 +2,12 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { BondRobot } from "@/components/ui/bond-robot"
+import { BondAILogo, BondAILogoWhite } from "@/components/ui/bond-logo"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +26,6 @@ import {
   ShoppingCart,
   Briefcase,
   Users,
-  Zap,
   FileText,
   TrendingUp,
   Lightbulb,
@@ -97,25 +97,14 @@ export default function Navbar() {
         
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-3">
-          <div className="relative w-20">
-            {/* Logo pour le mode clair */}
-            <Image
-              src="/Bond-ai_logo.png"
-              alt="BondAI Logo"
-              width={80}
-              height={80}
-              className="block dark:hidden object-contain"
-              priority
-            />
-            {/* Logo pour le mode sombre */}
-            <Image
-              src="/Bond-a_blanc.png"
-              alt="BondAI Logo"
-              width={80}
-              height={80}
-              className="hidden dark:block object-contain"
-              priority
-            />
+          <div className="flex items-center space-x-3">
+            <BondRobot size="md" className="text-brand-cyan" />
+            <div className="hidden dark:block">
+              <BondAILogoWhite width={120} height={40} />
+            </div>
+            <div className="block dark:hidden">
+              <BondAILogo width={120} height={40} />
+            </div>
           </div>
         </Link>
 

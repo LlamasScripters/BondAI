@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { BondRobot } from "@/components/ui/bond-robot"
 import { Loader2, Send, Download, Eye, Palette, Sparkles, ExternalLink, Rocket } from "lucide-react"
 import { agentsAPI } from "@/lib/api"
 
@@ -372,8 +373,11 @@ Votre site est maintenant en ligne et accessible à tous ! Vous pouvez partager 
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8 pt-8">
+          <div className="flex justify-center mb-6">
+            <BondRobot size="xl" showLightBulb={true} />
+          </div>
           <h1 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-            <Palette className="h-10 w-10 text-purple-600" />
+            <Palette className="h-10 w-10 text-brand-cyan" />
             Portfolio Creator AI
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -381,10 +385,10 @@ Votre site est maintenant en ligne et accessible à tous ! Vous pouvez partager 
             Générez des sections, descriptions de projets, et même le code HTML complet !
           </p>
           <div className="flex items-center justify-center gap-2 mt-4">
-            <Badge variant="secondary">🤖 IA Créative</Badge>
-            <Badge variant="secondary">🎨 Design Moderne</Badge>
-            <Badge variant="secondary">💻 Code HTML/CSS</Badge>
-            <Badge variant="secondary">📱 Responsive</Badge>
+            <Badge variant="secondary" className="bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20">🤖 IA Créative</Badge>
+            <Badge variant="secondary" className="bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20">🎨 Design Moderne</Badge>
+            <Badge variant="secondary" className="bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20">💻 Code HTML/CSS</Badge>
+            <Badge variant="secondary" className="bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20">📱 Responsive</Badge>
           </div>
         </div>
 
@@ -742,4 +746,4 @@ Votre site est maintenant en ligne et accessible à tous ! Vous pouvez partager 
       </div>
     </div>
   )
-} 
+}

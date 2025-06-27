@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BondRobot } from "@/components/ui/bond-robot"
 import Link from "next/link"
 
 interface Service {
@@ -142,32 +143,41 @@ export default function ServiceMarketplace() {
       <div className="max-w-7xl mx-auto">
         {/* Hero Section with SMP positioning */}
         <div className="text-center mb-8 pt-8">
+          <div className="flex justify-center mb-6">
+            <BondRobot size="xl" showLightBulb={true} />
+          </div>
           <h1 className="text-4xl font-bold text-foreground mb-4">
             BondAI - Services Management Platform
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            La première marketplace qui génère automatiquement les portfolios de vos prestataires grâce à l'IA
+            La première marketplace qui génère automatiquement les portfolios de vos prestataires grâce à l&apos;IA
           </p>
           
           {/* Value Proposition Cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="p-6 text-center">
-              <Zap className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Portfolio IA Automatique</h3>
+            <Card className="p-6 text-center border-brand-cyan/20 bg-gradient-to-b from-brand-cyan/5 to-transparent">
+              <div className="w-12 h-12 bg-brand-cyan/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="h-6 w-6 text-brand-cyan" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-brand-cyan">Portfolio IA Automatique</h3>
               <p className="text-sm text-muted-foreground">
                 Prestataires professionnels en 2 minutes au lieu de 2 semaines
               </p>
             </Card>
-            <Card className="p-6 text-center">
-              <Bot className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Service Paths Intelligents</h3>
+            <Card className="p-6 text-center border-brand-cyan/20 bg-gradient-to-b from-brand-cyan/5 to-transparent">
+              <div className="w-12 h-12 bg-brand-cyan/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Bot className="h-6 w-6 text-brand-cyan" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-brand-cyan">Service Paths Intelligents</h3>
               <p className="text-sm text-muted-foreground">
                 Feuilles de route personnalisées générées par IA
               </p>
             </Card>
-            <Card className="p-6 text-center">
-              <Shield className="h-12 w-12 text-purple-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Paiement Sécurisé</h3>
+            <Card className="p-6 text-center border-brand-cyan/20 bg-gradient-to-b from-brand-cyan/5 to-transparent">
+              <div className="w-12 h-12 bg-brand-cyan/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-6 w-6 text-brand-cyan" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-brand-cyan">Paiement Sécurisé</h3>
               <p className="text-sm text-muted-foreground">
                 Contractualisation automatique + escrow intégré
               </p>
@@ -176,25 +186,37 @@ export default function ServiceMarketplace() {
 
           {/* Quick Actions */}
           <div className="flex flex-col md:flex-row gap-4 justify-center mb-8">
-            <Button size="lg" asChild className="bg-gradient-to-r from-blue-600 to-indigo-600">
+            <Button 
+              size="lg" 
+              className="bg-brand-cyan hover:bg-brand-cyan-dark text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              asChild
+            >
               <Link href="/ai-portfolio">
-                <Lightbulb className="h-5 w-5 mr-2" />
+                <BondRobot size="sm" className="mr-2" />
                 Créer mon Portfolio IA (GRATUIT)
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-brand-cyan text-brand-cyan hover:bg-brand-cyan/10 font-semibold px-8 py-3 rounded-xl"
+              asChild
+            >
               <Link href="/service-paths">
-                <Zap className="h-5 w-5 mr-2" />
+                <Lightbulb className="h-5 w-5 mr-2" />
                 Générer mes Service Paths
               </Link>
             </Button>
           </div>
 
           {/* Social Proof */}
-          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-green-800 font-medium">
-              🎉 Déjà 127 portfolios générés automatiquement • 89% des prestataires recommandent SMP
-            </p>
+          <div className="text-center p-4 bg-gradient-to-r from-green-50 to-brand-cyan/5 rounded-xl border border-green-200/50">
+            <div className="flex items-center justify-center space-x-2 text-green-700">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-sm font-medium">
+                🎉 Déjà 127 portfolios générés automatiquement • 89% des prestataires recommandent SMP
+              </span>
+            </div>
           </div>
         </div>
 
@@ -318,7 +340,7 @@ export default function ServiceMarketplace() {
               </div>
               {nameFilter && (
                 <div className="mt-2 text-sm text-gray-600">
-                  {filteredServices.length} résultat(s) pour "{nameFilter}"
+                  {filteredServices.length} résultat(s) pour &quot;{nameFilter}&quot;
                 </div>
               )}
             </div>
@@ -332,7 +354,7 @@ export default function ServiceMarketplace() {
                       <h3 className="text-lg font-medium mb-2">Aucun résultat trouvé</h3>
                       <p className="text-sm">
                         {nameFilter 
-                          ? `Aucun prestataire trouvé pour "${nameFilter}"`
+                          ? `Aucun prestataire trouvé pour &quot;${nameFilter}&quot;`
                           : "Essayez d'ajuster vos critères de recherche"
                         }
                       </p>
